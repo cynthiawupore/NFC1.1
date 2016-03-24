@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>NFC走带操控</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="renderer" content="webkit">
+	<meta name="x5-orientation" content="portrait">
+	<meta name="Generator" contect="sublime text 3">
+	<meta name="author" content="Cynthia,2015-08-10,yinqingqian@outlook.com">
+	<meta http-equiv="Content-Language" contect="zh-CN"> 
+	<meta http-equiv="windows-Target" contect="_top">
+	<meta name="keywords" content="keyword,keyword">
+	<meta name="description" content="your description">
+	<link rel="shortcut icon" href="img/ico.png" type="image/x-icon" />
+	<link rel="stylesheet" href="css/css.css">
+	<script src="js/jquery-1.11.1.min.js"></script>
+	<script src="js/animate.js"></script>
+</head>
+<body>
+
+	<div class="NFC">
+		<div class="NFC-box">
+			<!-- 操作台 BEGIN -->
+			<section id="main">
+				<div class="main">
+					<div class="cont-block cont-block-bg1" style="margin-top:0px">
+						<label for="">走带计数</label><span id="now">0</span>
+						<label for="" style="margin-left: 25px;">上次计数</label><span id="last">0</span>
+					</div>
+					<div class="cont-block cont-block-bg1">
+						<label for="" class="speed-pre f_l">走带速度</label>
+						<div class="speed-box f_l">
+							
+							<label name="fast" for="fast" class="checked"><input type="radio" name="speed" id="fast" checked="checked" value="1" style="margin-left:20px">速度快</label>
+							
+							<label name="slow" for="slow" style="margin-left:0px"><input type="radio" name="speed" id="slow" value="0">速度慢</label>
+						</div>
+					</div>
+					<div class="cont-block cont-block-bg1">
+						<label for="">端口选择</label>
+							<select id="com">
+						　　　　 <option value="0">com0</option>
+						　　　　 <option value="1">com1</option>
+						　　　　 <option value="2">com2</option>
+						　　　　 <option value="3">com3</option>
+						　　　　 <option value="4">com4</option>
+								 <option value="5">com5</option>
+								 <option value="6">com6</option>
+								 <option value="7">com7</option>
+								 <option value="8">com8</option>
+								 <option value="9">com9</option>
+								 <option value="10">com10</option>
+						　　</select>
+					</div>
+					<div class="cont-block cont-block-bg1">
+						<label for="">红酒类别</label>
+							<select id ="wine">
+						　　　　 
+						　　</select>
+					</div>
+					<div class="cont-block cont-block-bg3" id="begin-box">
+						<input type="number"   id="num" class="inpt-enter-num f_l" placeholder="请输入您想要走带的次数" value=0 Pattern="">
+						<input type="submit" class="inpt-btn-1 f_l" value="开始" id="begin">
+					</div>
+					<div class="cont-block cont-block-bg3" id="paused" style="display:none">
+						<input type="button" class="inpt-btn-2 f_l" value="暂停" id="recover">
+						<input type="button" class="inpt-btn-2 f_l" style="margin-left: 5px;" value="结束" id="end">
+					</div>
+					<div class="cont-block cont-block-bg2">
+						<label for="" style="color:#fff">写入成功计数</label><span style="color:#a1a1a1;" id="now2">0</span>
+					</div>
+					<div class="cont-block cont-block-bg2">
+						<label for="" style="color:#fff">上次计数</label><span style="color:#a1a1a1;" id="last2">0</span>
+					</div>
+					<div class="cont-block loading-bg" style="width:297px">
+						<div class="load-left f_l"></div>
+						<div class="load-right f_l"></div>
+						<div class="process-box">
+							<label for="" id="process-num">0%</label>
+							<div class="process"></div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- 操作台 END -->
+
+			<!-- 动画 BEGIN -->
+			<section id="animation">
+				<div class="animation bg1">
+					<img src="img/item1-1.png" alt="" class="item item1-1">
+					<img src="img/item1-2.png" alt="" class="item item1-2" style="display:none">
+					<img src="img/item1-3.png" alt="" class="item item1-3" style="display:none">
+					<img src="img/item2.png" alt="" class="item item2">
+					<img src="img/item3-1.png" alt="" class="item item3-1">
+					<img src="img/item3-2.png" alt="" class="item item3-2">
+					<img src="img/item3-3.png" alt="" class="item item3-3">
+					<img src="img/item3-4.png" alt="" class="item item3-4">
+					<img src="img/item4.png" alt="" class="item item4">
+					<img src="img/item5.png" alt="" class="item item5">
+					<img src="img/item6.png" alt="" class="item item6">
+					<img src="img/item7.png" alt="" class="item item7">
+					<img src="img/item8.png" alt="" class="item item8">
+					<img src="img/item9.png" alt="" class="item item9">
+					<img src="img/item10.png" alt="" class="item item10">
+					<img src="img/item11.png" alt="" class="item item11">
+				</div>
+			</section>
+			<!-- 动画 END -->
+		</div>
+	</div>
+
+</body>
+<!-- radio style BEGIN -->
+
+
+<script>
+//异步请求begin
+
+$(function(){
+	//alert(222)
+       $.ajax({
+	     
+		 url:'http://127.0.0.1:8080/suyuan/api?action=getInfo',
+		 type:'post',
+			dataType : 'jsonp', 
+			jsonp: 'jsoncallback',
+		// beforeSend:function(){alert(2)},
+		 success:function(data){
+		//console.log(data.items)
+		var str = "";
+		$.each(data.items,function(index,v){
+		    str +="<option value='"+v.id+"'>"+v.name+"</option>"
+		})
+		$("#wine").html(str)
+		//console.log(str)
+		  /*  var arr = eval("("+data+")")
+			var str = "";
+			$.each(arr,function(index,v){
+			
+			   str +="<option value='"+arr.id+"'>"+arr.name+"</option>"
+			})
+			$("#wine").html(str)*/
+		 },
+			error:function(data){
+				
+			console.log(data)
+			}
+		 
+	   })
+	   var url="http://127.0.0.1:8080/suyuan/api?"
+	   $("#begin").click(function(){
+		// item1 枪
+		begin()
+        var str= new Object()
+		    str.com = $("#com").val();
+		    str.num = $("#num").val();
+			str.type = $("#wine").val();
+		    str.speed = $("[name=speed]:checked").val();
+		var json = JSON.stringify(str)
+		$.ajax({
+
+			url:url,
+			data:{action:'start',value:json},
+			type:'post',
+			dataType : 'jsonp', 
+			jsonp: 'jsoncallback', 
+			success:function(arr){
+				//alert(data.issucc)
+               // var arr = eval ("("+data+")")
+				//alert(arr)
+				if(arr.issucc==1){
+                    
+					alert('异常');
+				}else if(arr.issucc ==0){
+					
+					$("#last2").html(arr.last)
+					$("#now2").html(arr.now)
+					
+				}
+			},
+				error:function(){
+				
+				//alert(1)
+				}
+		})
+	})
+
+	var get = setInterval(function(){
+
+		if($("#getNum").val()==1){
+
+			ask('getNum')
+		}
+	},2000)
+
+
+})
+//异步请求end
+	$(function() {
+	  $('.speed-box label').click(function(){
+	    var radioId = $(this).attr('name');
+	    $('.speed-box label').removeAttr('class') && $(this).attr('class', 'checked');
+	    $('input[type="radio"]').removeAttr('checked') && $('#' + radioId).attr('checked', 'checked');
+	  });
+	});
+</script>
+<!-- radio style END -->
+
+<!-- 开始按钮 BEGIN -->
+<script>
+	
+	
+	function begin(){
+	
+	   $("#begin-box").hide();
+		$("#paused").fadeToggle();
+
+		$("img").addClass('running-animation');
+		$("animation").addClass('running-animation');
+		$(".process").addClass('running-animation');
+		$(".load-left").addClass('running-animation');
+		$(".load-right").addClass('running-animation');
+
+
+		$(".animation").addClass('bgchange');
+		setTimeout('item1_2()',0);
+		setTimeout('item2()',0);
+		setTimeout('item1_3()',3000);
+		setTimeout('item3_1()',0);
+		setTimeout('item3_2()',0);
+		setTimeout('item3_3()',0);
+		setTimeout('item3_4()',0);
+		setTimeout('item4()',0);
+		setTimeout('item5()',0);
+		setTimeout('item6()',0);
+		setTimeout('item7()',0);
+		setTimeout('item8()',0);
+		setTimeout('item9()',0);
+		setTimeout('item10()',0);
+
+		setTimeout('item11()',0);
+
+		setTimeout('load_left_bg()',0);
+		setTimeout('load_right_bg()',0);
+		setTimeout('process()',0);
+
+		setInterval('process_num()',0);
+		 
+		$(".item1-2").hide();
+		$(".item1-3").hide();
+	}
+</script>
+<!-- 开始按钮  -->
+<script>
+	$("#recover").click(function(){
+		var a = document.getElementById("recover").value
+		if(a == "暂停"){
+		ask('pause')
+			document.getElementById("recover").value="恢复"
+
+			$("img").addClass('pause-animation');
+			$(".animation ").addClass('pause-animation');
+			$(".process").addClass('pause-animation');
+			$(".load-left").addClass('pause-animation');
+			$(".load-right").addClass('pause-animation');
+
+			$("img").removeClass('running-animation');
+			$("animation").removeClass('running-animation');
+			$(".process").removeClass('running-animation');
+			$(".load-left").removeClass('running-animation');
+			$(".load-right").removeClass('running-animation');
+
+		}else{
+		ask('recovery')
+			document.getElementById("recover").value="暂停"
+
+			$("img").addClass('running-animation');
+			$("animation").addClass('running-animation');
+			$(".process").addClass('running-animation');
+			$(".load-left").addClass('running-animation');
+			$(".load-right").addClass('running-animation');
+	
+			$("img").removeClass('pause-animation');
+			$(".animation ").removeClass('pause-animation');
+			$(".process").removeClass('pause-animation');
+			$(".load-left").removeClass('pause-animation');
+			$(".load-right").removeClass('pause-animation');
+		}
+	})
+	$("#end").click(function(){
+	ask('stop')
+		$("img").addClass('running-animation');
+		$(".animation ").addClass('running-animation');
+		$(".process").addClass('running-animation');
+		$(".load-left").addClass('running-animation');
+		$(".load-right").addClass('running-animation');
+		
+		$("#begin-box").show();
+		$("#paused").hide();
+
+		$(".item1-2").hide();
+		$(".item1-3").hide();
+		$(".item1-1").show();
+
+		$(".animation").removeClass('bgchange');
+		$(".item1-3").removeClass('item1-3-style')
+		$(".item2").removeClass('item2-style')
+		$(".item3-1").removeClass('item3-1-style')
+		$(".item3-2").removeClass('item3-2-style')
+		$(".item3-3").removeClass('item3-3-style')
+		$(".item3-4").removeClass('item3-4-style')
+		$(".item4").removeClass('item4-style')
+		$(".item5").removeClass('item5-style')
+		$(".item6").removeClass('item6-style')
+		$(".item7").removeClass('item7-style')
+		$(".item8").removeClass('item8-style')
+		$(".item9").removeClass('item9-style')
+		$(".item10").removeClass('item10-style')
+		$(".item11").removeClass('item11-style')
+
+		$(".load-left").removeClass('load-left-bg')
+		$(".load-right").removeClass('load-right-bg')
+		$(".process").removeClass('process-style')
+		document.getElementById("process-num").innerText=0+ "%";
+		document.getElementById("recover").value ="暂停"
+
+
+		// $("#end").css({
+		// 	background:"#7f8892"
+		// })
+	})
+	
+    function ask(a){
+var url="http://127.0.0.1:8080/suyuan/api?"
+    	$.ajax({
+
+			url:url,
+			data:{action:a},
+			type:'post',
+			dataType : 'jsonp',  
+			jsonp:"jsoncallback",
+			success:function(arr){
+                
+               // var arr = eval ("("+data+")")
+				if(arr.issucc==1){
+
+					alert('异常');
+				}else if(arr.issucc == 0){
+                    
+					if(a=='stop'){
+                        
+					    $("#last1").html(arr.last)
+					    $("#now1").html(arr.now)
+					}else if(a == 'recovery'){
+
+						
+						$("#last1").html(arr.last)
+					    $("#now1").html(arr.now)
+					}else if(a == 'pause'){
+                        
+						
+						$("#last2").html(arr.last)
+					    $("#now2").html(arr.now)
+					}
+				}
+			}
+		})
+    }	
+</script>
+
+</html>
